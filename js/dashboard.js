@@ -2,14 +2,19 @@ import { checkSession } from './auth.js';
 import { renderLayout } from './ui/layout.js';
 import { supabase } from './supabase.js';
 
+/**
+ * Inicialização e checagem de privilégios do Painel Administrativo
+ */
 async function init() {
   const { session, profile } = await checkSession();
 
+  // Se não houver sessão, barra a renderização e joga para o login
   if (!session) {
     window.location.href = '/login.html';
     return;
   }
 
+  // Se não for administrador/proprietário, redireciona para a respectiva área de nível de acesso
   if (profile?.role !== 'proprietario') {
     if (profile?.role === 'cliente') {
       window.location.href = '/cliente/dashboard-cliente.html';
@@ -19,9 +24,11 @@ async function init() {
     return;
   }
 
+  // Busca contagens assíncronas do banco de dados para os cards informativos
   const { count: autoresCount } = await supabase.from('autores').select('*', { count: 'exact', head: true });
   const { count: livrosCount } = await supabase.from('livros').select('*', { count: 'exact', head: true });
 
+  // Estrutura de conteúdo com estilização utilitária do Tailwind CSS
   const content = `
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <div class="card flex items-center gap-4">
@@ -53,7 +60,9 @@ async function init() {
     </div>
   `;
 
+  // Renderiza a estrutura global com o conteúdo acoplado
   renderLayout(content, 'dashboard', profile);
 }
 
+// Executa o ciclo de inicialização da página
 init();
