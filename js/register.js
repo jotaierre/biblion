@@ -2,6 +2,9 @@ import { register } from './auth.js';
 import { initIcons } from './ui/icons.js';
 import { showAlert } from './ui/alerts.js';
 
+// 🔄 SOLUÇÃO PADRÃO VITE: Captura de forma dinâmica o prefixo (/biblion/ ou /) configurado no projeto
+const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+
 document.addEventListener('DOMContentLoaded', () => {
   initIcons();
 
@@ -38,9 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
         'success'
       );
 
-      // Redireciona para a tela de login após 1.5 segundos para o usuário ver o feedback
+      // 📁 CORREÇÃO: Redireciona para a tela de login mantendo o subdiretório oficial na nuvem
       setTimeout(() => {
-        window.location.href = '/login.html';
+        window.location.href = `${baseUrl}login.html`;
       }, 1500);
 
     } catch (error) {
