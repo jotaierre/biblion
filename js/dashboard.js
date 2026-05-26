@@ -8,18 +8,22 @@ import { supabase } from './supabase.js';
 async function init() {
   const { session, profile } = await checkSession();
 
-  // Se não houver sessão, barra a renderização e joga para o login
+  // 📁 FORÇA BRUTA LOGÍCA: Garante que os caminhos de expulsão de segurança mantenham o /biblion
+  const isGitHubPages = window.location.hostname.includes('github.io');
+  const basePath = isGitHubPages ? '/biblion' : '';
+
+  // Se não houver sessão ativa, barra o usuário e joga para o login
   if (!session) {
-    window.location.href = '/login.html';
+    window.location.href = `${basePath}/login.html`;
     return;
   }
 
-  // Se não for administrador/proprietário, redireciona para a respectiva área de nível de acesso
+  // Se estiver logado mas não for o proprietário administrativo
   if (profile?.role !== 'proprietario') {
     if (profile?.role === 'cliente') {
-      window.location.href = '/cliente/dashboard-cliente.html';
+      window.location.href = `${basePath}/cliente/dashboard-cliente.html`;
     } else {
-      window.location.href = '/login.html';
+      window.location.href = `${basePath}/login.html`;
     }
     return;
   }

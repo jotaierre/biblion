@@ -63,8 +63,11 @@ export async function logout() {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
 
-    // Redirecionamento absoluto padronizado. O Vite injeta o prefixo /biblion/ na build.
-    window.location.href = '/login.html';
+    // 📁 FORÇA BRUTA LOGÍCA: Detecta se está no GitHub Pages para manter a subpasta no logout
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    const basePath = isGitHubPages ? '/biblion' : '';
+
+    window.location.href = `${basePath}/login.html`;
   } catch (error) {
     showAlert('Erro', error.message, 'error');
   }
@@ -89,14 +92,20 @@ export async function getUserProfile(userId) {
 }
 
 /**
- * Gerencia as Guardas de Rota no modelo multipáginas (Vite)
+ * Gerencia as Guardas de Rota no modelo multipáginas
+ * FORÇA BRUTA: Injeta o /biblion de forma manual no GitHub Pages para evitar o erro 404
  */
 export function redirectByUserRole(role) {
-  // O Vite intercepta as barras iniciais e insere o subdiretório automaticamente na compilação
+  // Descobre se o site está rodando no ambiente de produção do GitHub Pages
+  const isGitHubPages = window.location.hostname.includes('github.io');
+
+  // Se for GitHub Pages, fixa o '/biblion' no começo, caso contrário fica em branco
+  const basePath = isGitHubPages ? '/biblion' : '';
+
   if (role === 'proprietario') {
-    window.location.href = '/pages/dashboard.html';
+    window.location.href = `${basePath}/pages/dashboard.html`;
   } else {
-    window.location.href = '/cliente/dashboard-cliente.html';
+    window.location.href = `${basePath}/cliente/dashboard-cliente.html`;
   }
 }
 
