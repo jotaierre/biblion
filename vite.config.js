@@ -2,7 +2,8 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
-  base: './',
+  // 📁 ALTERE DE './' PARA '/biblion/':
+  base: '/biblion/',
   build: {
     outDir: 'dist',
     rollupOptions: {

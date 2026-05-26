@@ -63,11 +63,8 @@ export async function logout() {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
 
-    // 📁 CORREÇÃO DINÂMICA: Mantém o subdiretório do GitHub Pages ao deslogar
-    const isGitHubPages = window.location.hostname.includes('github.io');
-    const basePath = isGitHubPages ? '/biblion' : '';
-
-    window.location.href = `${basePath}/login.html`;
+    // 📁 ATUALIZADO: Deixamos o caminho absoluto limpo. O Vite adicionará o /biblion/ na build.
+    window.location.href = '/login.html';
   } catch (error) {
     showAlert('Erro', error.message, 'error');
   }
@@ -94,19 +91,13 @@ export async function getUserProfile(userId) {
 
 /**
  * Gerencia as Guardas de Rota no modelo multipáginas (Vite)
- * 📁 CORREÇÃO DINÂMICA: Detecta o ambiente para evitar o erro 404
  */
 export function redirectByUserRole(role) {
-  // Verifica se o domínio atual pertence ao GitHub Pages
-  const isGitHubPages = window.location.hostname.includes('github.io');
-
-  // Se for GitHub Pages, adiciona '/biblion', se for localhost, fica vazio ''
-  const basePath = isGitHubPages ? '/biblion' : '';
-
+  // 📁 ATUALIZADO: Caminhos limpos com barras. O Vite agora gerencia o subdiretório do repositório!
   if (role === 'proprietario') {
-    window.location.href = `${basePath}/pages/dashboard.html`;
+    window.location.href = '/pages/dashboard.html';
   } else {
-    window.location.href = `${basePath}/cliente/dashboard-cliente.html`;
+    window.location.href = '/cliente/dashboard-cliente.html';
   }
 }
 
