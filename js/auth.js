@@ -13,16 +13,10 @@ export async function login(email, password) {
 
     if (error) throw error;
 
-    // Busca o perfil do usuário na tabela pública de forma assíncrona
     const profile = await getUserProfile(data.user.id);
+    if (!profile) throw new Error('Perfil de usuário não encontrado na base de dados.');
 
-    if (!profile) {
-      throw new Error('Perfil de usuário não encontrado na base de dados.');
-    }
-
-    // Encaminha dinamicamente para o dashboard correto baseado na Role
     redirectByUserRole(profile.role);
-
     return data;
   } catch (error) {
     showAlert('Erro', error.message, 'error');
@@ -35,16 +29,10 @@ export async function login(email, password) {
  */
 export async function register(email, password, nome, role = 'cliente') {
   try {
-    // Passamos o nome e a role dentro de options.data para o PostgreSQL criar o perfil automaticamente
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: {
-          nome,
-          role
-        }
-      }
+      options: { data: { nome, role } }
     });
 
     if (error) throw error;
@@ -63,11 +51,9 @@ export async function logout() {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
 
-    // 📁 FORÇA BRUTA LOGÍCA: Detecta se está no GitHub Pages para manter a subpasta no logout
     const isGitHubPages = window.location.hostname.includes('github.io');
-    const basePath = isGitHubPages ? '/biblion' : '';
-
-    window.location.href = `${basePath}/login.html`;
+    const base = isGitHubPages ? '/biblion' : '';
+    window.location.href = `${base}/login.html`;
   } catch (error) {
     showAlert('Erro', error.message, 'error');
   }
@@ -81,31 +67,23 @@ export async function getUserProfile(userId) {
     .from('perfis')
     .select('*')
     .eq('id', userId)
-    .maybeSingle(); // Retorna null de forma amigável caso o usuário não tenha linha na tabela pública
+    .maybeSingle();
 
-  if (profileError) {
-    console.error("Erro na consulta de perfil:", profileError.message);
-    throw profileError;
-  }
-
+  if (profileError) throw profileError;
   return profile;
 }
 
 /**
- * Gerencia as Guardas de Rota no modelo multipáginas
- * FORÇA BRUTA: Injeta o /biblion de forma manual no GitHub Pages para evitar o erro 404
+ * Gerencia as Guardas de Rota no modelo multipáginas via Força Bruta
  */
 export function redirectByUserRole(role) {
-  // Descobre se o site está rodando no ambiente de produção do GitHub Pages
   const isGitHubPages = window.location.hostname.includes('github.io');
-
-  // Se for GitHub Pages, fixa o '/biblion' no começo, caso contrário fica em branco
-  const basePath = isGitHubPages ? '/biblion' : '';
+  const base = isGitHubPages ? '/biblion' : '';
 
   if (role === 'proprietario') {
-    window.location.href = `${basePath}/pages/dashboard.html`;
+    window.location.href = `${base}/pages/dashboard.html`;
   } else {
-    window.location.href = `${basePath}/cliente/dashboard-cliente.html`;
+    window.location.href = `${base}/cliente/dashboard-cliente.html`;
   }
 }
 
@@ -114,16 +92,12 @@ export function redirectByUserRole(role) {
  */
 export async function checkSession() {
   const { data: { session }, error } = await supabase.auth.getSession();
-
-  if (error || !session) {
-    return { session: null, profile: null };
-  }
+  if (error || !session) return { session: null, profile: null };
 
   try {
     const profile = await getUserProfile(session.user.id);
     return { session, profile };
   } catch (error) {
-    console.error('Erro ao buscar perfil durante validação:', error);
     return { session, profile: null };
   }
 }

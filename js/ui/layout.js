@@ -1,30 +1,39 @@
 import { logout } from '../auth.js';
 import { initIcons, heroicon } from './icons.js';
 
+/**
+ * Função de Força Bruta para calcular o caminho correto de qualquer link dinâmico
+ */
+function getCorrectPath(targetPath) {
+  const isGitHubPages = window.location.hostname.includes('github.io');
+  // Se for GitHub Pages, garante o prefixo /biblion sem duplicar barras. Se for localhost, fica limpo.
+  const base = isGitHubPages ? '/biblion' : '';
+
+  // Remove barras iniciais duplicadas do caminho alvo para evitar conflitos
+  const cleanPath = targetPath.startsWith('/') ? targetPath : `/${targetPath}`;
+  return `${base}${cleanPath}`;
+}
+
 export function renderLayout(contentHtml, activePage = 'dashboard', profile) {
   const app = document.getElementById('app');
   if (!app) return;
 
   const isAdmin = profile?.role === 'proprietario';
 
-  // 📁 FORÇA BRUTA LOGÍCA: Identifica o ambiente de produção para injetar a subpasta
-  const isGitHubPages = window.location.hostname.includes('github.io');
-  const basePath = isGitHubPages ? '/biblion' : '';
-
-  // Injeta dinamicamente o basePath na construção das rotas do menu
+  // Monta as rotas aplicando a função de segurança em tempo de execução
   const sidebarItems = [
     {
       id: 'dashboard',
       label: 'Dashboard',
       icon: 'dashboard',
-      href: isAdmin ? `${basePath}/pages/dashboard.html` : `${basePath}/cliente/dashboard-cliente.html`
+      href: isAdmin ? getCorrectPath('/pages/dashboard.html') : getCorrectPath('/cliente/dashboard-cliente.html')
     },
   ];
 
   if (isAdmin) {
     sidebarItems.push(
-      { id: 'autores', label: 'Autores', icon: 'author', href: `${basePath}/pages/autores/index.html` },
-      { id: 'livros', label: 'Livros', icon: 'book', href: `${basePath}/pages/livros/index.html` }
+      { id: 'autores', label: 'Autores', icon: 'author', href: getCorrectPath('/pages/autores/index.html') },
+      { id: 'livros', label: 'Livros', icon: 'book', href: getCorrectPath('/pages/livros/index.html') }
     );
   }
 
@@ -103,7 +112,6 @@ export function renderLayout(contentHtml, activePage = 'dashboard', profile) {
     });
   }
 
-  // Set initial theme
   if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     document.documentElement.classList.add('dark');
   } else {

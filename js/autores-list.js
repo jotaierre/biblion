@@ -9,10 +9,6 @@ const pageSize = 10;
 let totalPages = 1;
 let currentProfile = null;
 
-// 📁 FORÇA BRUTA LÓGICA: Identifica o ambiente para injetar a subpasta de forma global nas funções
-const isGitHubPages = window.location.hostname.includes('github.io');
-const basePath = isGitHubPages ? '/biblion' : '';
-
 async function loadAutores() {
   try {
     const { data, count } = await getAutores(currentPage, pageSize);
@@ -24,10 +20,13 @@ async function loadAutores() {
 }
 
 function renderTable(autores, totalCount) {
+  const isGitHubPages = window.location.hostname.includes('github.io');
+  const base = isGitHubPages ? '/biblion' : '';
+
   const content = `
     <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
       <h1 class="text-2xl font-bold">Gerenciamento de Autores</h1>
-      <a href="${basePath}/pages/autores/form.html" class="btn-primary flex items-center gap-2">
+      <a href="${base}/pages/autores/form.html" class="btn-primary flex items-center gap-2">
         ${heroicon('plus')}
         Novo Autor
       </a>
@@ -61,7 +60,7 @@ function renderTable(autores, totalCount) {
                   </span>
                 </td>
                 <td class="px-6 py-4 text-right space-x-2">
-                  <a href="${basePath}/pages/autores/form.html?id=${autor.id}" class="text-primary hover:text-primary-hover inline-block" title="Editar">
+                  <a href="${base}/pages/autores/form.html?id=${autor.id}" class="text-primary hover:text-primary-hover inline-block" title="Editar">
                     ${heroicon('pencil')}
                   </a>
                   <button onclick="window.handleToggleActive('${autor.id}', ${autor.ativo})" class="${autor.ativo ? 'text-danger hover:text-red-700' : 'text-success hover:text-green-700'} inline-block" title="${autor.ativo ? 'Inativar' : 'Reativar'}">
@@ -125,13 +124,14 @@ window.handleToggleActive = async (id, currentStatus) => {
 
 async function init() {
   const { session, profile } = await checkSession();
+  const isGitHubPages = window.location.hostname.includes('github.io');
+  const base = isGitHubPages ? '/biblion' : '';
 
-  // Se não houver sessão ativa ou se o perfil não for o proprietário administrativo
   if (!session || profile?.role !== 'proprietario') {
     if (profile?.role === 'cliente') {
-      window.location.href = `${basePath}/cliente/dashboard-cliente.html`;
+      window.location.href = `${base}/cliente/dashboard-cliente.html`;
     } else {
-      window.location.href = `${basePath}/login.html`;
+      window.location.href = `${base}/login.html`;
     }
     return;
   }
