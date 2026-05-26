@@ -2,10 +2,13 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
+  // 🔄 Define a subpasta correta para o ambiente do GitHub Pages
   base: '/biblion/', // 👈 ESSA LINHA É A MAIS IMPORTANTE DE TODAS
+
   build: {
     outDir: 'dist',
     rollupOptions: {
+      // 🚀 MAPEAMENTO MULTIPÁGINAS: Força o Vite a compilar e aplicar a base correta em todos os arquivos
       input: {
         main: resolve(__dirname, 'index.html'),
         login: resolve(__dirname, 'login.html'),
