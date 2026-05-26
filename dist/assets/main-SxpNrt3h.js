@@ -1,0 +1,1 @@
+import{i as e,t}from"./auth-XPfV9UYX.js";async function n(){let{session:n,profile:r}=await t();n&&r?e(r.role):window.location.href=`/login.html`}n();

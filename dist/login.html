@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Sistema de Biblioteca</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="./assets/login-Dl4nFNyQ.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/auth-XPfV9UYX.js">
+  <link rel="modulepreload" crossorigin href="./assets/icons-1bdniJDT.js">
+  <link rel="stylesheet" crossorigin href="./assets/icons-ljIQ6yZk.css">
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+  <div class="card w-full max-w-md">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-primary/10 text-primary rounded-full mb-4">
+        <div data-heroicon="book" class="w-8 h-8"></div>
+      </div>
+      <h1 class="text-2xl font-bold">Bem-vindo de volta</h1>
+      <p class="text-text-secondary-light dark:text-text-secondary-dark">Acesse sua conta para gerenciar a biblioteca</p>
+    </div>
+
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label for="email" class="label-field">E-mail</label>
+        <input type="email" id="email" class="input-field" placeholder="seu@email.com" required>
+      </div>
+      <div>
+        <label for="password" class="label-field">Senha</label>
+        <input type="password" id="password" class="input-field" placeholder="••••••••" required>
+      </div>
+      <button type="submit" id="loginBtn" class="btn-primary w-full py-3">
+        Entrar
+      </button>
+    </form>
+
+    <div class="mt-6 text-center">
+      <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+        Não tem uma conta? 
+        <a href="/registro.html" class="text-primary hover:underline font-medium">Cadastre-se</a>
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>

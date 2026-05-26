@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Biblioteca</title>
+  <script type="module">
+    import { checkSession, redirectByUserRole } from '/js/auth.js';
+    
+    async function init() {
+      const { session, profile } = await checkSession();
+      if (session && profile) {
+        redirectByUserRole(profile.role);
+      } else {
+        window.location.href = '/login.html';
+      }
+    }
+    
+    init();
+  </script>
+</head>
+<body class="bg-slate-50 flex items-center justify-center min-h-screen">
+  <div class="text-center">
+    <p class="text-slate-600 animate-pulse">Carregando...</p>
+  </div>
+</body>
+</html>
