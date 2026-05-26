@@ -2,8 +2,7 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
-  // 📁 ALTERE DE './' PARA '/biblion/':
-  base: '/biblion/',
+  base: '/biblion/', // 👈 ESSA LINHA É A MAIS IMPORTANTE DE TODAS
   build: {
     outDir: 'dist',
     rollupOptions: {

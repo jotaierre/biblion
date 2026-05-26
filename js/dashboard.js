@@ -5,29 +5,20 @@ import { supabase } from './supabase.js';
 async function init() {
   const { session, profile } = await checkSession();
 
-  // 📁 CORREÇÃO DINÂMICA: Detecta se está no GitHub Pages para montar a rota certa
-  const isGitHubPages = window.location.hostname.includes('github.io');
-  const basePath = isGitHubPages ? '/biblion' : '';
-
-  // Se não houver sessão ativa, manda o usuário direto para a tela de login
   if (!session) {
-    window.location.href = `${basePath}/login.html`;
+    window.location.href = '/login.html';
     return;
   }
 
-  // Se estiver logado mas não for o proprietário administrativo
   if (profile?.role !== 'proprietario') {
     if (profile?.role === 'cliente') {
-      // 📁 CORREÇÃO: Mantém o /biblion/ na URL para o cliente
-      window.location.href = `${basePath}/cliente/dashboard-cliente.html`;
+      window.location.href = '/cliente/dashboard-cliente.html';
     } else {
-      // Caso não tenha role definida, manda para o login por segurança
-      window.location.href = `${basePath}/login.html`;
+      window.location.href = '/login.html';
     }
     return;
   }
 
-  // Fetch some quick stats
   const { count: autoresCount } = await supabase.from('autores').select('*', { count: 'exact', head: true });
   const { count: livrosCount } = await supabase.from('livros').select('*', { count: 'exact', head: true });
 
