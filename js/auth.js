@@ -62,7 +62,12 @@ export async function logout() {
   try {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
-    window.location.href = '/login.html';
+
+    // 📁 CORREÇÃO DINÂMICA: Mantém o subdiretório do GitHub Pages ao deslogar
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    const basePath = isGitHubPages ? '/biblion' : '';
+
+    window.location.href = `${basePath}/login.html`;
   } catch (error) {
     showAlert('Erro', error.message, 'error');
   }
@@ -89,12 +94,19 @@ export async function getUserProfile(userId) {
 
 /**
  * Gerencia as Guardas de Rota no modelo multipáginas (Vite)
+ * 📁 CORREÇÃO DINÂMICA: Detecta o ambiente para evitar o erro 404
  */
 export function redirectByUserRole(role) {
+  // Verifica se o domínio atual pertence ao GitHub Pages
+  const isGitHubPages = window.location.hostname.includes('github.io');
+
+  // Se for GitHub Pages, adiciona '/biblion', se for localhost, fica vazio ''
+  const basePath = isGitHubPages ? '/biblion' : '';
+
   if (role === 'proprietario') {
-    window.location.href = '/pages/dashboard.html';
+    window.location.href = `${basePath}/pages/dashboard.html`;
   } else {
-    window.location.href = '/cliente/dashboard-cliente.html';
+    window.location.href = `${basePath}/cliente/dashboard-cliente.html`;
   }
 }
 
