@@ -62,3 +62,17 @@ export async function toggleLivroAtivo(id, ativo) {
   if (error) throw error;
   return data[0];
 }
+
+/**
+ * 📁 CORREÇÃO DO BUILD: Exporta a função requisitada pela listagem de livros
+ * Remove o registro fisicamente da tabela do Supabase baseado no ID recebido
+ */
+export async function deleteLivro(id) {
+  const { data, error } = await supabase
+    .from('livros')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+  return data;
+}
