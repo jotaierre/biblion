@@ -7,20 +7,29 @@ export function renderLayout(contentHtml, activePage = 'dashboard', profile) {
 
   const isAdmin = profile?.role === 'proprietario';
 
+  // 📁 FORÇA BRUTA LOGÍCA: Identifica o ambiente de produção para injetar a subpasta
+  const isGitHubPages = window.location.hostname.includes('github.io');
+  const basePath = isGitHubPages ? '/biblion' : '';
+
+  // Injeta dinamicamente o basePath na construção das rotas do menu
   const sidebarItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', href: isAdmin ? '/pages/dashboard.html' : '/cliente/dashboard-cliente.html' },
+    {
+      id: 'dashboard',
+      label: 'Dashboard',
+      icon: 'dashboard',
+      href: isAdmin ? `${basePath}/pages/dashboard.html` : `${basePath}/cliente/dashboard-cliente.html`
+    },
   ];
 
   if (isAdmin) {
     sidebarItems.push(
-      { id: 'autores', label: 'Autores', icon: 'author', href: '/pages/autores/index.html' },
-      { id: 'livros', label: 'Livros', icon: 'book', href: '/pages/livros/index.html' }
+      { id: 'autores', label: 'Autores', icon: 'author', href: `${basePath}/pages/autores/index.html` },
+      { id: 'livros', label: 'Livros', icon: 'book', href: `${basePath}/pages/livros/index.html` }
     );
   }
 
   app.innerHTML = `
     <div class="flex min-h-screen">
-      <!-- Sidebar -->
       <aside class="w-64 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark hidden md:flex flex-col fixed inset-y-0">
         <div class="p-6 flex items-center gap-3">
           <div class="text-primary">${heroicon('book')}</div>
@@ -44,9 +53,7 @@ export function renderLayout(contentHtml, activePage = 'dashboard', profile) {
         </div>
       </aside>
 
-      <!-- Main Content -->
       <main class="flex-1 md:ml-64 bg-background-light dark:bg-background-dark">
-        <!-- Header -->
         <header class="h-16 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark flex items-center justify-between px-6 sticky top-0 z-10">
           <div class="md:hidden flex items-center gap-3">
              <div class="text-primary">${heroicon('book')}</div>
