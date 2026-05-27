@@ -6,6 +6,10 @@ import { showAlert } from './ui/alerts.js';
 let currentProfile = null;
 let autorId = null;
 
+// 📁 FORÇA BRUTA ABSOLUTA: Identifica se o ambiente é o GitHub Pages em tempo de execução
+const isGitHubPages = window.location.hostname.includes('github.io');
+const base = isGitHubPages ? '/biblion' : '';
+
 async function init() {
   const { session, profile } = await checkSession();
   if (!session || profile?.role !== 'proprietario') return;
@@ -46,7 +50,7 @@ async function init() {
         
         <div class="flex gap-4 pt-4">
           <button type="submit" class="btn-primary">Salvar</button>
-          <a href="/pages/autores/index.html" class="btn-secondary">Cancelar</a>
+          <a href="${base}/pages/autores/index.html" class="btn-secondary">Cancelar</a>
         </div>
       </form>
     </div>
@@ -56,7 +60,7 @@ async function init() {
 
   document.getElementById('autorForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const formData = {
       nome: document.getElementById('nome').value,
       nacionalidade: document.getElementById('nacionalidade').value,
@@ -66,12 +70,17 @@ async function init() {
     try {
       if (autorId) {
         await updateAutor(autorId, formData);
-        showAlert('Sucesso', 'Autor atualizado com sucesso!', 'success');
+        showAlert('Sucesso', 'Autor updated com sucesso!', 'success');
       } else {
         await createAutor(formData);
         showAlert('Sucesso', 'Autor criado com sucesso!', 'success');
       }
-      setTimeout(() => window.location.href = '/pages/autores/index.html', 1500);
+
+      // 📁 CORREÇÃO: Redirecionamento de sucesso ajustado com a base dinâmica
+      setTimeout(() => {
+        window.location.href = `${base}/pages/autores/index.html`;
+      }, 1500);
+
     } catch (error) {
       showAlert('Erro', 'Erro ao salvar autor: ' + error.message, 'error');
     }

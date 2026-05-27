@@ -7,6 +7,10 @@ import { showAlert } from './ui/alerts.js';
 let currentProfile = null;
 let livroId = null;
 
+// 📁 FORÇA BRUTA ABSOLUTA: Garante a persistência do /biblion/ em ambiente de produção
+const isGitHubPages = window.location.hostname.includes('github.io');
+const base = isGitHubPages ? '/biblion' : '';
+
 async function init() {
   const { session, profile } = await checkSession();
   if (!session || profile?.role !== 'proprietario') return;
@@ -64,7 +68,7 @@ async function init() {
         
         <div class="flex gap-4 pt-4">
           <button type="submit" class="btn-primary">Salvar</button>
-          <a href="/pages/livros/index.html" class="btn-secondary">Cancelar</a>
+          <a href="${base}/pages/livros/index.html" class="btn-secondary">Cancelar</a>
         </div>
       </form>
     </div>
@@ -74,7 +78,7 @@ async function init() {
 
   document.getElementById('livroForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const formData = {
       titulo: document.getElementById('titulo').value,
       autor_id: document.getElementById('autor_id').value,
@@ -91,7 +95,12 @@ async function init() {
         await createLivro(formData);
         showAlert('Sucesso', 'Livro criado com sucesso!', 'success');
       }
-      setTimeout(() => window.location.href = '/pages/livros/index.html', 1500);
+
+      // 📁 CORREÇÃO: Redirecionamento após sucesso blindado com a rota do repositório
+      setTimeout(() => {
+        window.location.href = `${base}/pages/livros/index.html`;
+      }, 1500);
+
     } catch (error) {
       showAlert('Erro', 'Erro ao salvar livro: ' + error.message, 'error');
     }
